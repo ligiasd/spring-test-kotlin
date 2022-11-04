@@ -20,14 +20,14 @@ class TopicoService(
         private val topicoViewMapper: TopicoViewMapper,
         private val topicoFormMapper: TopicoFormMapper,
         private val notFoundMessage: String = "Topico nao encontrado!",
-        private val em: EntityManager
+        //private val em: EntityManager
 ) {
 
     fun listar(
             nomeCurso: String?,
             paginacao: Pageable
     ): Page<TopicoView> {
-        print(em)
+        //print(em)
         val topicos = if (nomeCurso == null) {
             repository.findAll(paginacao)
         } else {
