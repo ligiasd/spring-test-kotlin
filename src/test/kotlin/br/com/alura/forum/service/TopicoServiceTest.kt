@@ -35,7 +35,7 @@ class TopicoServiceTest {
         )
 
     @Test
-    fun `deve retornar topicos à partir do nome`(){
+    fun `deve retornar topicos a partir do nome`(){
         every{ topicoViewMapper.map(any())} returns TopicoViewTest.build()
 
         topicoService.listar("Kotlin Avançado", paginaçao)
