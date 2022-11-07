@@ -18,12 +18,18 @@ class TopicoServiceTest {
 
     private val topicos = PageImpl(listOf(TopicoTest.build()))
 
-    private val topicoRepository: TopicoRepository = mockk{
-        every{ findByCursoNome(any(), any()) } returns topicos
-    }
     private val paginaçao: Pageable = mockk()
 
-    private val topicoViewMapper: TopicoViewMapper = mockk()
+    private val topicoRepository: TopicoRepository = mockk{
+        every{ findByCursoNome(any(), any()) } returns topicos
+        every{ findAll(paginaçao)} returns topicos
+
+    }
+
+    private val topicoViewMapper: TopicoViewMapper = mockk(){
+        every{ map(any())} returns TopicoViewTest.build()
+
+    }
     private val topicoFormMapper: TopicoFormMapper = mockk()
     private val entityManager: EntityManager = mockk()
 
@@ -36,16 +42,23 @@ class TopicoServiceTest {
 
     @Test
     fun `deve retornar topicos a partir do nome`(){
-        every{ topicoViewMapper.map(any())} returns TopicoViewTest.build()
-
         topicoService.listar("Kotlin Avançado", paginaçao)
 
         verify(exactly = 1) {topicoRepository.findByCursoNome(any(), any())}
         verify(exactly = 1) {topicoViewMapper.map(any())}
         verify(exactly = 0) {topicoRepository.findAll(paginaçao)}
-
-
     }
+
+    @Test
+    fun `deve retornar todos os topicos quando o retorno for nulo`(){
+        topicoService.listar(null,paginaçao)
+
+        verify(exactly = 0) {topicoRepository.findByCursoNome(any(), any())}
+        verify(exactly = 1) {topicoViewMapper.map(any())}
+        verify(exactly = 1) {topicoRepository.findAll(paginaçao)}
+    }
+
+
 
 
 }
