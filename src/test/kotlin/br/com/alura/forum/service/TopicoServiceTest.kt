@@ -1,5 +1,6 @@
 package br.com.alura.forum.service
 
+import br.com.alura.forum.exception.NotFoundException
 import br.com.alura.forum.mapper.TopicoFormMapper
 import br.com.alura.forum.mapper.TopicoViewMapper
 import br.com.alura.forum.model.TopicoTest
@@ -9,9 +10,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import org.apache.el.stream.Optional
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import java.util.Optional.empty
 import javax.persistence.EntityManager
 
 class TopicoServiceTest {
@@ -56,6 +61,16 @@ class TopicoServiceTest {
         verify(exactly = 0) {topicoRepository.findByCursoNome(any(), any())}
         verify(exactly = 1) {topicoViewMapper.map(any())}
         verify(exactly = 1) {topicoRepository.findAll(paginaçao)}
+    }
+
+    @Test
+    fun `deve listar notFoundException quando o topico nao encontrado`(){
+        every{ topicoRepository.findById(any())} returns empty()
+
+        val atual = assertThrows<NotFoundException> {
+            topicoService.buscarPorId(1)
+        }
+        assertThat(atual.message).isEqualTo("Topico nao encontrado!")
     }
 
 
